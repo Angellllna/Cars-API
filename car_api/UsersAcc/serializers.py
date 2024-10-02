@@ -30,7 +30,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         username_or_email = attrs.get("username")
         user = User.objects.filter(email=username_or_email).first() or User.objects.filter(username=username_or_email).first()
 
-        if user and user.check_password(attrs["password"]):
+        if user and user.check_password(attrs.get("password")):
             attrs["username"] = user.username
             return super().validate(attrs)
         raise serializers.ValidationError("No user found with these credentials.")

@@ -19,5 +19,5 @@ class RegisterView(generics.GenericAPIView):
         return Response(serializer.errors, status=400)
 
 
-class MyTokenObtainPairSerializer(TokenObtainPairView):
+class MyTokenObtainPairSrView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
