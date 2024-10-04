@@ -50,7 +50,6 @@ class Model_Car(models.Model):
 # 10. Each car can be on sale [boolean is_on_sale = True/False]
 
 
-
 class Car(models.Model):
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE, verbose_name="Brand")
     model = models.ForeignKey(Model_Car, on_delete=models.CASCADE, verbose_name="Model")

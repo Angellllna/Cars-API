@@ -17,7 +17,7 @@ EXPOSE 8000
 COPY ./docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh
 
-CMD ["poetry", "run", "python", "manage.py", "runserver"]
+CMD ["poetry", "run", "./car_api/python", "manage.py", "runserver"]
 
 # comand for run: docker-compose up --build
 # http://localhost:8000

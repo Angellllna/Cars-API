@@ -18,7 +18,7 @@ services:
   web:
     build: .
     entrypoint: /docker-entrypoint.sh
-    command: poetry run python manage.py runserver 0.0.0.0:8000
+    command: poetry run python ./car_api/manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/car_api
     ports:

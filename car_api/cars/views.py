@@ -42,11 +42,12 @@ class CarFilter(filters.FilterSet):
 
 
 class CarViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Car.objects.filter(is_on_sale=True)
+    # queryset = Car.objects.filter(is_on_sale=True)
     serializer_class = CarSerializer
     permission_classes = [permissions.IsAuthenticated]
     filter_backends = [DjangoFilterBackend]
     filterset_class = CarFilter
+
     # filterset_fields = {
     #     "brand__name": ["exact", "icontains"],
     #     "brand__country": ["exact", "icontains"],
@@ -62,12 +63,15 @@ class CarViewSet(viewsets.ReadOnlyModelViewSet):
     #     "engine": ["exact"],
     #     "is_on_sale": ["exact"],
     # }
+    def get_queryset(self):
+        if self.request.path == "/cars/all/":
+            return Car.objects.filter()
+
+        return Car.objects.filter(is_on_sale=True)
 
     @action(detail=False, methods=["get"], url_path="all")
     def all_cars(self, request):
-        queryset = Car.objects.all()
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
+        return self.list(request)
 
 
 class BrandViewSet(viewsets.ReadOnlyModelViewSet):
