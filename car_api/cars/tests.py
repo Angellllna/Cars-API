@@ -18,7 +18,7 @@ class CarModelTestCase(TestCase):
         )
 
         response = self.client.post(
-            "/user/login/",
+            "/acc/user/login/",
             {"username": "testuser", "password": "testpassword"},
             format="json",
         )
@@ -77,12 +77,12 @@ class CarModelTestCase(TestCase):
 
     def test_user_creation(self):
         response = self.client.post(
-            "/user/create/",
+            "/acc/user/create/",
             {
                 "username": "newuser",
                 "email": "newuser@example.com",
                 "password": "newpassword",
-                "confirm_password": "newpassword",
+                "password2": "newpassword",
             },
             format="json",
         )
@@ -94,12 +94,12 @@ class CarModelTestCase(TestCase):
 
     def test_user_login(self):
         response = self.client.post(
-            "/user/login/",
+            "/acc/user/login/",
             {"username": "testuser", "password": "testpassword"},
             format="json",
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertIn("token", response.data)
+        self.assertIn("access", response.data)
 
     def test_get_brands(self):
         response = self.client.get("/brands/", format="json")
@@ -176,14 +176,16 @@ class CarModelTestCase(TestCase):
         self.assertEqual(len(response.data), 0)
 
         response = self.client.get(
-            "/cars/?brand_name=Mercedes&engine=2.0L&fuel_type=gas", format="json"
+            "/cars/all/?brand_name=Mercedes&engine=2.0L&fuel_type=gas", format="json"
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]["id"], self.car3.id)
 
     def test_filter_cars_by_year_range(self):
-        response = self.client.get("/cars/?year_min=2010&year_max=2021", format="json")
+        response = self.client.get(
+            "/cars/all/?year_min=2010&year_max=2021", format="json"
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 3)
         self.assertEqual(response.data[0]["id"], self.car1.id)
@@ -222,7 +224,7 @@ class CarModelTestCase(TestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]["id"], self.car1.id)
+        self.assertEqual(response.data[0]["id"], self.car2.id)
 
     def test_filter_cars_by_transmission(self):
         response = self.client.get("/cars/?transmission=Automatic", format="json")
@@ -240,7 +242,34 @@ class CarModelTestCase(TestCase):
         self.assertIn(self.car1.id, car_ids)
         self.assertIn(self.car2.id, car_ids)
 
-        response = self.client.get("/cars/?is_on_sale=False", format="json")
+        response = self.client.get("/cars/all/?is_on_sale=False", format="json")
+        
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]["id"], self.car3.id)
+
+    def test_invalid_year_filter(self):
+        response = self.client.get("/cars/?year_min=two_thousand&year_max=2020", format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)  
+        self.assertIn("year_min", response.data)  
+
+    def test_car_price_negative(self):
+            response = self.client.post(
+                "/cars/",
+                {
+                    "brand": self.brand_bmw.id,
+                    "model": self.model_x5_2015.id,
+                    "price": -50000, 
+                    "transmission": "Manual",
+                    "engine": "2.0L",
+                    "mileage": 100000,
+                    "exterior_color": "Red",
+                    "interior_color": "Black",
+                    "fuel_type": "Gasoline",
+                    "is_on_sale": True,
+                },
+                format="json"
+            )
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+            self.assertIn('price', response.data)
+            self.assertEqual(response.data['price'][0])
