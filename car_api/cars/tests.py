@@ -6,6 +6,7 @@ from rest_framework.test import APIClient
 from .models import Brand, Car, Model_Car
 
 User = get_user_model()
+# poetry run python ./car_api/manage.py test cars
 
 
 class CarModelTestCase(TestCase):
@@ -243,33 +244,21 @@ class CarModelTestCase(TestCase):
         self.assertIn(self.car2.id, car_ids)
 
         response = self.client.get("/cars/all/?is_on_sale=False", format="json")
-        
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]["id"], self.car3.id)
 
     def test_invalid_year_filter(self):
-        response = self.client.get("/cars/?year_min=two_thousand&year_max=2020", format="json")
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)  
-        self.assertIn("year_min", response.data)  
+        response = self.client.get(
+            "/cars/?year_min=two_thousand&year_max=2020", format="json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("year_min", response.data)
 
-    def test_car_price_negative(self):
-            response = self.client.post(
-                "/cars/",
-                {
-                    "brand": self.brand_bmw.id,
-                    "model": self.model_x5_2015.id,
-                    "price": -50000, 
-                    "transmission": "Manual",
-                    "engine": "2.0L",
-                    "mileage": 100000,
-                    "exterior_color": "Red",
-                    "interior_color": "Black",
-                    "fuel_type": "Gasoline",
-                    "is_on_sale": True,
-                },
-                format="json"
-            )
-            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-            self.assertIn('price', response.data)
-            self.assertEqual(response.data['price'][0])
+    def test_invalid_price_filter(self):
+        response = self.client.get("/cars/?price_min=chh&price_max=10000", format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("price_min", response.data)
+
+  

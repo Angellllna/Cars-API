@@ -1,3 +1,5 @@
+# python ./car_api/manage.py generate_cars 10
+
 import random
 
 from cars.models import Brand, Car, Model_Car
@@ -46,4 +48,4 @@ class Command(BaseCommand):
         )
 
 
-# python manage.py generate_cars 10
+
