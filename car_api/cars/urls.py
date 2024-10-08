@@ -5,7 +5,6 @@ from .views import BrandViewSet, CarViewSet, ModelViewSet
 
 router = DefaultRouter()
 router.register(r"cars", CarViewSet, basename="car")
-# router.register(r"cars/all", CarAllViewSet, basename="car-all")
 router.register(r"brands", BrandViewSet)
 router.register(r"models", ModelViewSet)
 

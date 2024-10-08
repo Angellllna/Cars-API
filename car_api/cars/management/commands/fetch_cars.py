@@ -1,12 +1,17 @@
+from decimal import Decimal
+
 import requests
-from django.core.management.base import BaseCommand
 from cars.models import Brand, Car, Model_Car
+from django.core.management.base import BaseCommand
+
 
 class Command(BaseCommand):
     help = "Fetch cars from external API and save to the database"
 
     def add_arguments(self, parser):
-        parser.add_argument("count", type=int, nargs='?', default=5, help="Number of cars to fetch")
+        parser.add_argument(
+            "count", type=int, nargs="?", default=5, help="Number of cars to fetch"
+        )
 
     def handle(self, *args, **options):
         count = options["count"]
@@ -23,7 +28,9 @@ class Command(BaseCommand):
 
                 model_name = car["model"]
                 year = car["year"]
-                model = Model_Car.objects.filter(model_name=model_name, year=year).first()
+                model = Model_Car.objects.filter(
+                    model_name=model_name, year=year
+                ).first()
                 if not model:
                     model = Model_Car.objects.create(
                         model_name=model_name,
@@ -35,7 +42,7 @@ class Command(BaseCommand):
                     brand=brand,
                     model=model,
                     defaults={
-                        "price": car.get("price", 0),
+                        "price": Decimal(car.get("price", 0)),
                         "transmission": car.get("transmission", "Manual"),
                         "engine": car.get("engine", "2.0L"),
                         "mileage": car.get("mileage", 0),

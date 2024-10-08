@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
 from django.db import models
@@ -71,7 +73,9 @@ class Car(models.Model):
         max_digits=10,
         decimal_places=2,
         verbose_name="Price",
-        validators=[MinValueValidator(0, "Price should be greater than 0")],
+        validators=[
+            MinValueValidator(Decimal("0.00"), "Price should be greater than 0")
+        ],
     )
     transmission = models.CharField(
         max_length=50,

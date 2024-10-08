@@ -24,10 +24,3 @@ class CarSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-# # GET /cars/all/ - list of all Car Objects [on sale and not on sale]
-# class CarAllSerializer(serializers.ModelSerializer):
-#     brand = BrandSerializer(read_only=True)
-#     model = ModelSerializer(read_only=True)
-#     class Meta:
-#         model = Car
-#         fields = "__all__"

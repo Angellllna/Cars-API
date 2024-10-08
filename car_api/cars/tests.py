@@ -42,7 +42,7 @@ class CarModelTestCase(TestCase):
         self.car1 = Car.objects.create(
             brand=self.brand_bmw,
             model=self.model_x5_2015,
-            price=50000,
+            price=50000.00,
             transmission="Automatic",
             engine="2.0L",
             mileage=20000,
@@ -54,7 +54,7 @@ class CarModelTestCase(TestCase):
         self.car2 = Car.objects.create(
             brand=self.brand_bmw,
             model=self.model_x5_2020,
-            price=70000,
+            price=70000.00,
             transmission="Automatic",
             engine="3.0L",
             mileage=5000,
@@ -257,8 +257,71 @@ class CarModelTestCase(TestCase):
         self.assertIn("year_min", response.data)
 
     def test_invalid_price_filter(self):
-        response = self.client.get("/cars/?price_min=chh&price_max=10000", format="json")
+        response = self.client.get(
+            "/cars/?price_min=chh&price_max=10000", format="json"
+        )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("price_min", response.data)
 
-  
+
+from io import StringIO
+from unittest.mock import patch
+
+from django.core.management import call_command
+
+
+class FetchCarsCommandTest(TestCase):
+    @patch("cars.management.commands.fetch_cars.requests.get")
+    def test_fetch_cars_command(self, mock_get):
+        mock_response_data = [
+            {
+                "make": "BMW",
+                "model": "X5",
+                "year": 2020,
+                "color": "Blue",
+                "mileage": 15000,
+                "price": 50000.00,
+                "fuelType": "gasoline",
+                "transmission": "Automatic",
+                "engine": "3.0L",
+            },
+            {
+                "make": "Mercedes",
+                "model": "E-Class",
+                "year": 2019,
+                "color": "Black",
+                "mileage": 20000,
+                "price": 55000.00,
+                "fuelType": "diesel",
+                "transmission": "Manual",
+                "engine": "2.0L",
+            },
+        ]
+
+        mock_get.return_value.status_code = 200
+        mock_get.return_value.json.return_value = mock_response_data
+
+        out = StringIO()
+        self.assertEqual(Brand.objects.count(), 0)
+
+        call_command("fetch_cars", 2, stdout=out)
+
+        self.assertEqual(Brand.objects.count(), 2)
+        self.assertEqual(Model_Car.objects.count(), 2)
+        self.assertEqual(Car.objects.count(), 2)
+
+        bmw = Brand.objects.get(name="BMW")
+        bmw_x5_model = Model_Car.objects.get(model_name="X5", year=2020)
+        bmw_car = Car.objects.get(brand=bmw, model=bmw_x5_model)
+        self.assertEqual(bmw_car.price, 50000)
+        self.assertEqual(bmw_car.fuel_type, "gasoline")
+        self.assertIn("Successfully fetched 2 cars", out.getvalue())
+
+    @patch("cars.management.commands.fetch_cars.requests.get")
+    def test_fetch_cars_command_with_api_failure(self, mock_get):
+        mock_get.return_value.status_code = 500
+
+        out = StringIO()
+        call_command("fetch_cars", 2, stdout=out)
+
+        self.assertIn("Failed to fetch cars", out.getvalue())

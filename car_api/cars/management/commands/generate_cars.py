@@ -1,6 +1,7 @@
 # python ./car_api/manage.py generate_cars 10
 
 import random
+from decimal import Decimal
 
 from cars.models import Brand, Car, Model_Car
 from django.core.management.base import BaseCommand
@@ -34,7 +35,7 @@ class Command(BaseCommand):
             Car.objects.create(
                 brand=brand,
                 model=model,
-                price=random.randint(10000, 100000),
+                price=Decimal(random.uniform(10000.00, 100000.00)),
                 transmission=random.choice(["Automatic", "Manual"]),
                 engine=random.choice(["1.4L", "2.0L", "3.0L", "5.0L"]),
                 mileage=random.randint(0, 300000),
@@ -46,6 +47,3 @@ class Command(BaseCommand):
         self.stdout.write(
             self.style.SUCCESS(f"{number_of_cars} cars created successfully!")
         )
-
-
-

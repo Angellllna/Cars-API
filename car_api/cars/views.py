@@ -8,10 +8,6 @@ from rest_framework.response import Response
 from .models import Brand, Car, Model_Car
 from .serializers import BrandSerializer, CarSerializer, ModelSerializer
 
-# Filter cars by brand [name, country]/model [name, year of issue [start, end], body
-# style]/price [min,max]/transmission/engine/mileage[min,max], exterior color, interior
-# color, fuel type;
-
 
 class CarFilter(filters.FilterSet):
     model_name = filters.CharFilter(
@@ -42,27 +38,12 @@ class CarFilter(filters.FilterSet):
 
 
 class CarViewSet(viewsets.ReadOnlyModelViewSet):
-    # queryset = Car.objects.filter(is_on_sale=True)
     serializer_class = CarSerializer
     permission_classes = [permissions.IsAuthenticated]
     filter_backends = [DjangoFilterBackend]
     filterset_class = CarFilter
 
-    # filterset_fields = {
-    #     "brand__name": ["exact", "icontains"],
-    #     "brand__country": ["exact", "icontains"],
-    #     "model__model_name": ["exact", "icontains"],
-    #     "model__year": ["gte", "lte"],
-    #     "model__body_style": ["exact"],
-    #     "price": ["gte", "lte"],
-    #     "mileage": ["gte", "lte"],
-    #     "exterior_color": ["exact"],
-    #     "interior_color": ["exact"],
-    #     "fuel_type": ["exact"],
-    #     "transmission": ["exact"],
-    #     "engine": ["exact"],
-    #     "is_on_sale": ["exact"],
-    # }
+
     def get_queryset(self):
         if self.request.path == "/cars/all/":
             return Car.objects.filter()
