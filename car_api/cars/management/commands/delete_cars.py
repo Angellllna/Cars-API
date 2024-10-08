@@ -12,4 +12,4 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS("All cars have been deleted"))
 
 
-#python manage.py delete_cars
+# python manage.py delete_cars

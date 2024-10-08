@@ -43,7 +43,6 @@ class CarViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = [DjangoFilterBackend]
     filterset_class = CarFilter
 
-
     def get_queryset(self):
         if self.request.path == "/cars/all/":
             return Car.objects.filter()
