@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "cars",
     "users_acc",
     "django_filters",
+    "drf_yasg",
 ]
 
 MIDDLEWARE = [

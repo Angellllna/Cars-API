@@ -13,42 +13,42 @@ Welcome to **Cars-API**, a Django-based application for searching cars. This pro
 
 ### 1. Project Initialization
 
-To set up the project, create and activate a virtual environment:
+To set up the project, create and activate a virtual environment using Poetry:
 
 ```bash
-# MacOS/Linux
-python -m venv venv
-source venv/bin/activate
-
-# Windows
-python -m venv venv
-venv\Scripts\activate
-```
-
-Install all dependencies using Poetry:
-
-```bash
+# Install dependencies
 poetry install
+
+# Activate the virtual environment
+poetry shell
 ```
 
-### 2. Database Setup
+### 2. Running with Docker
+
+This project uses `docker-compose` to simplify running the application. To start the services:
+
+```bash
+docker-compose up --build
+or
+python ./car_api/manage.py runserver
+```
+
+This command will build the Docker images and start the services defined in the `docker-compose.yml` file.
+
+### 3. Database Setup
 
 After making changes to the models, create and apply migrations:
 
 ```bash
-python ./car_api/manage.py makemigrations
-python ./car_api/manage.py migrate
+  python ./car_api/manage.py makemigrations
+  python ./car_api/manage.py migrate
 ```
 
-### 3. Running the Server
+### 4. Running the Server
 
-To start a local server:
+The local server will automatically start with `docker-compose`. It can be accessed at `http://localhost:8000`.
 
-```bash
-python ./car_api/manage.py runserver
-```
-
-### 4. Running Tests
+### 5. Running Tests
 
 To run the tests for the cars app:
 
@@ -58,27 +58,34 @@ python ./car_api/manage.py test cars
 
 ## Special Commands
 
-### 5. Using Special Commands
+### 6. Using Special Commands
 
 - Generate random cars:
   ```bash
-  python ./car_api/manage.py generate_cars <number_of_cars>
+  python ./car_api/manage.py/generate_cars <number_of_cars>
   ```
 - Fetch cars from an external API:
   ```bash
   python ./car_api/manage.py fetch_cars <number_of_cars>
   ```
 
-### 6. Other Useful Commands
+### 7. Other Useful Commands
 
 - Launch the Django shell (an interactive interface for working with models):
   ```bash
-  python ./car_api/manage.py shell
+  poetry shell
   ```
+
+### 8. Swagger
+
+```bash
+For Swagger UI: http://localhost:8000/swagger/
+For Redoc: http://localhost:8000/redoc/
+```
 
 ## API Endpoints
 
-### 7. Endpoints
+### 9. Endpoints
 
 ```http
 POST /user/create/
@@ -122,7 +129,7 @@ POST /cars/upload/
 
 Upload a file to add car data directly [file format: CSV, JSON]
 
-### 8. Filters
+### 9. Filters
 
 Each endpoint supports filters for each field. Examples:
 

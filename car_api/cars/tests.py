@@ -19,7 +19,7 @@ class CarModelTestCase(TestCase):
         )
 
         response = self.client.post(
-            "/acc/user/login/",
+            "/user/login/",
             {"username": "testuser", "password": "testpassword"},
             format="json",
         )
@@ -78,7 +78,7 @@ class CarModelTestCase(TestCase):
 
     def test_user_creation(self):
         response = self.client.post(
-            "/acc/user/create/",
+            "/user/create/",
             {
                 "username": "newuser",
                 "email": "newuser@example.com",
@@ -95,7 +95,7 @@ class CarModelTestCase(TestCase):
 
     def test_user_login(self):
         response = self.client.post(
-            "/acc/user/login/",
+            "/user/login/",
             {"username": "testuser", "password": "testpassword"},
             format="json",
         )
